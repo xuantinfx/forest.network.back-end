@@ -6,6 +6,8 @@ var logger = require('morgan');
 
 const mongoose = require('mongoose')
 
+require('./lib/sync').init(require('./config').nodeHost);
+
 mongoose.connect(require('./config').connectionString, {useNewUrlParser: true}, (err) => {
   if(err) {
     console.log(err)
