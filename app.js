@@ -4,6 +4,16 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const mongoose = require('mongoose')
+
+mongoose.connect(require('./config').connectionString, {useNewUrlParser: true}, (err) => {
+  if(err) {
+    console.log(err)
+  } else {
+    console.log("Connect to DB successfully!");
+  }
+})
+
 const statusCode = require('./constant/statusCode')
 const {responseData} = require('./utilities/responseData')
 

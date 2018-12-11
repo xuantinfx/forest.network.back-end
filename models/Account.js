@@ -3,9 +3,9 @@ let PaymentHistorySchema = require('./PaymentHistorySchema');
 let TweetSchema = require('./TweetSchema');
 
 let AccountSchema = new mongoose.Schema({
-  address: { type: String, required: true },
+  address: { type: String, required: true, minlength: 56, maxlength: 56, unique: true },
   balance: { type: Number, required: true },
-  sequence: { type: Number, required: true },
+  sequence: { type: Number, required: true, min: 0 },
   bandwidth: { type: Number },
   bandwidthTime: { type: Date },
   displayName: { type: String },
