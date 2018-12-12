@@ -5,10 +5,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 const mongoose = require('mongoose')
-
 const config = require('./config')
+const sync = require('./lib/sync')
 
-require('./lib/sync').init(config.nodeHost, config.syncBlock);
+sync.init(config.nodeHost, config.syncBlock);
 
 mongoose.connect(config.connectionString, {useNewUrlParser: true}, (err) => {
   if(err) {
