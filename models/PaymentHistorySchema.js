@@ -1,6 +1,6 @@
 let mongoose = require('mongoose');
 module.exports = new mongoose.Schema({
-  time: { type: Date, required: true },
-  to: { type: String, required: true },
+  time: { type: Date },
+  fromOrTo: { type: String, required: true },
   amount: { type: Number, required: true }
 })
