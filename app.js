@@ -6,7 +6,11 @@ var logger = require('morgan');
 
 const mongoose = require('mongoose')
 
-mongoose.connect(require('./config').connectionString, {useNewUrlParser: true}, (err) => {
+const config = require('./config')
+
+require('./lib/sync').init(config.nodeHost, config.syncBlock);
+
+mongoose.connect(config.connectionString, {useNewUrlParser: true}, (err) => {
   if(err) {
     console.log(err)
   } else {
