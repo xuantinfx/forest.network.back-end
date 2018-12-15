@@ -15,12 +15,18 @@ module.exports = (req, res, next) => {
                 //console.log('index',account.tweets[0]._id == req.params.id)
                 if(index != -1){
                     responseData(res, account.tweets[index], 200, {});
-                    return;
+                }
+                else{
+                    responseData(res, {}, 404, {error: 'The tweets id ' + req.params.id + ' is not existed!'});
                 }
             }
+            else{
+                responseData(res, {}, 404, {error : 'Tweets is not existed in account with address: ' + req.params.address});
+            }
         }
-        responseData(res, {}, 404, {error: error['404']})
-        
+        else{
+            responseData(res, {}, 404, {error : 'Cannot find account with address: ' + req.params.address});
+        }
     })
     //responseData(res, getProfile(req.params.address), 200, {})
 }

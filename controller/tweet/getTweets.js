@@ -9,10 +9,14 @@ module.exports = (req, res, next) => {
         if(account){
             if(account.tweets){
                 responseData(res, account.tweets, 200, {})
-                return;
+            }
+            else{
+                responseData(res, {}, 404, {error : 'Tweets is not existed in account with address: ' + req.params.address});
             }
         }
-        responseData(res, {}, 404, {error: error['404']})
+        else{
+            responseData(res, {}, 404, {error : 'Cannot find account with address: ' + req.params.address});
+        }
     })
     //responseData(res, getProfile(req.params.address), 200, {})
 }
