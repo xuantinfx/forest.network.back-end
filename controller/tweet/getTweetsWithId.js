@@ -6,7 +6,6 @@ const _ = require('lodash')
 module.exports = (req, res, next) => {
     account.findOne({address: req.params.address},{tweets:1},
     (err, account)=> {
-        if (err) return handleError(err);
         if(account){
             if(account.tweets){
                 let index = _.findIndex(account.tweets,(tweet)=>{
