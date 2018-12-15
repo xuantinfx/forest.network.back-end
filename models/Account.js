@@ -19,6 +19,6 @@ let AccountSchema = new mongoose.Schema({
   tweets: [TweetSchema],
   followings: [String],
   followers: [String]
-})
+}, {strict: false})
 
 module.exports = mongoose.model('Account', AccountSchema);
