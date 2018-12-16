@@ -8,9 +8,9 @@ let AccountSchema = new mongoose.Schema({
   sequence: { type: Number, required: true, min: 0 },
   bandwidth: { type: Number },
   bandwidthTime: { type: Date },
-  displayName: { type: String },
+  name: { type: String },
   username: { type: String },
-  avatarUrl: { type: String },
+  picture: { type: String },
   coverPhotoUrl: { type: String },
   bio: { type: String },
   location: { type: String },
@@ -19,6 +19,6 @@ let AccountSchema = new mongoose.Schema({
   tweets: [TweetSchema],
   followings: [String],
   followers: [String]
-})
+}, {strict: false})
 
 module.exports = mongoose.model('Account', AccountSchema);
