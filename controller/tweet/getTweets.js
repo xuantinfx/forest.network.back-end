@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
             let accountRes = {};
             accountRes.tweets = account.tweets||[]
             accountRes.name = account.name||''
-            accountRes.picture = account.picture||''
+            accountRes.picture = account.picture||Buffer.alloc(0)
 
             //console.log(accountRes)
 
