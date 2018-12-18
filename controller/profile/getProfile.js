@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
             responseData(res, accountInfo, 200, {});
         }
         else{
-            responseData(res, {}, 404, {error : 'Cannot find account with address: ' + req.params.address});
+            responseData(res, {}, 202, {error : 'Cannot find account with address: ' + req.params.address});
         }
     })
     //responseData(res, getProfile(req.params.address), 200, {})
