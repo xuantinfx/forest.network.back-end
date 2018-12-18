@@ -6,11 +6,22 @@ module.exports = (req, res, next) => {
     account.findOne({address: req.params.address},{tweets:1, name: 1, picture:1},
     (err, account)=> {
         if(account){
-            account.tweets = account.tweets||[]
-            account.name = account.name||''
-            account.picture = account.picture||''
-            
-            responseData(res, account, 200, {})
+            let accountRes = {};
+            accountRes.tweets = account.tweets||[]
+            accountRes.name = account.name||''
+            accountRes.picture = account.picture||''
+
+            //console.log(accountRes)
+
+            let tweets = [];
+            for(let i = 0; i < accountRes.tweets.length; i++) {
+                let tweet = accountRes.tweets[i].toObject();
+                tweet.name = accountRes.name;
+                tweet.picture = accountRes.picture;
+                tweets.push(tweet);
+            }
+
+            responseData(res, tweets, 200, {})
         }
         else{
             responseData(res, {}, 202, {error : 'Cannot find account with address: ' + req.params.address});
