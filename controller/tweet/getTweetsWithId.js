@@ -16,15 +16,15 @@ module.exports = (req, res, next) => {
                     responseData(res, account.tweets[index], 200, {});
                 }
                 else{
-                    responseData(res, {}, 404, {error: 'The tweets id ' + req.params.id + ' is not existed!'});
+                    responseData(res, {}, 202, {error: 'The tweets id ' + req.params.id + ' is not existed!'});
                 }
             }
             else{
-                responseData(res, {}, 404, {error : 'Tweets is not existed in account with address: ' + req.params.address});
+                responseData(res, {}, 202, {error : 'Tweets is not existed in account with address: ' + req.params.address});
             }
         }
         else{
-            responseData(res, {}, 404, {error : 'Cannot find account with address: ' + req.params.address});
+            responseData(res, {}, 202, {error : 'Cannot find account with address: ' + req.params.address});
         }
     })
     //responseData(res, getProfile(req.params.address), 200, {})
