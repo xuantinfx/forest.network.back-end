@@ -8,7 +8,18 @@ module.exports = (key, value) => {
         case "name": 
             return value.toString("utf-8");
         case "followings":
-            return Followings.decode(value);
+            let result;
+            try {
+                result = Followings.decode(value);
+            }
+            catch(err) {
+                console.log("DECODE_FOLLOWINGS_FAIL", value.toString());
+                console.error("ERROR", err)
+                result = {
+                    addresses: []
+                }
+            }
+            return result
         case "picture":
         default:
             return value;

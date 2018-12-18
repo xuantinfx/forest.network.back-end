@@ -7,7 +7,7 @@ let AccountSchema = new mongoose.Schema({
   balance: { type: Number, required: true },
   sequence: { type: Number, required: true, min: 0 },
   bandwidth: { type: Number },
-  bandwidthTime: { type: Date },
+  bandwidthTime: { type: Number },
   name: { type: String },
   username: { type: String },
   picture: { type: String },
