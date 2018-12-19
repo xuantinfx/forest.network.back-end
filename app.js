@@ -8,13 +8,12 @@ const mongoose = require('mongoose')
 const config = require('./config')
 const sync = require('./lib/sync')
 
-sync.init(config.nodeHost, config.syncBlock);
-
 mongoose.connect(config.connectionString, {useNewUrlParser: true}, (err) => {
   if(err) {
     console.log(err)
   } else {
     console.log("Connect to DB successfully!");
+    sync.init(config.nodeHost, config.syncBlock);
   }
 })
 
@@ -40,7 +39,7 @@ app.all('*', function(req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-  res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+  res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, public_key");
   next();
 });
 
