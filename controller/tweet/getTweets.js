@@ -1,27 +1,28 @@
 const { responseData } = require('../../utilities/responseData')
 var account = require('../../models/Account')
-var error = require('../../constant/statusCode')
+var mapNameAndPicToTweets = require('../../utilities/mapNameAndPicToTweets')
 
 module.exports = (req, res, next) => {
-    account.findOne({address: req.params.address},{tweets:1, name: 1, picture:1},
+    //console.log(req.query)
+    account.findOne({address: req.params.address},{tweets:1, name: 1, picture:1, address: 1},
     (err, account)=> {
         if(account){
-            let accountRes = {};
-            accountRes.tweets = account.tweets||[]
-            accountRes.name = account.name||''
-            accountRes.picture = account.picture||''
-
-            //console.log(accountRes)
-
-            let tweets = [];
-            for(let i = 0; i < accountRes.tweets.length; i++) {
-                let tweet = accountRes.tweets[i].toObject();
-                tweet.name = accountRes.name;
-                tweet.picture = accountRes.picture;
-                tweets.push(tweet);
+            let tweets = mapNameAndPicToTweets(account)
+            let paging = {}
+            if(!req.query){
+                paging = {page:1, size: tweets.length}
             }
-
-            responseData(res, tweets, 200, {})
+            else{
+                if(req.query.page && req.query.size)
+                {
+                    paging = req.query
+                }
+                else{
+                    paging = {page:1, size: tweets.length}
+                }
+            }
+            //console.log('page', paging)
+            responseData(res, tweets, 200, {}, paging)
         }
         else{
             responseData(res, {}, 202, {error : 'Cannot find account with address: ' + req.params.address});

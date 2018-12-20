@@ -5,6 +5,7 @@ const transactionRouter = require('./transaction')
 var tweetsRouter = require('./tweets')
 const follower = require('./follower')
 const following = require('./following')
+const feed = require('./feed')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -17,5 +18,6 @@ router.use('/tweets', tweetsRouter);
 router.use('/transaction', transactionRouter)
 router.use('/followers', follower)
 router.use('/followings', following)
+router.use('/feed',feed)
 
 module.exports = router;
