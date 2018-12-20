@@ -1,14 +1,16 @@
 const { responseData } = require('../../utilities/responseData')
-const BlockChainInfo = require('../../models/BlockChainInfo')
 var account = require('../../models/Account')
-var error = require('../../constant/statusCode')
+var _ = require('lodash')
 
 module.exports = (req, res, next) => {
-    account.findOne({address: req.params.address},{tweets:0},
+    account.findOne({address: req.params.address},
     (err, accountInfo)=> {
         if(accountInfo)
-        {
-            responseData(res, accountInfo, 200, {});
+        {   
+            let accountInfoObj = accountInfo.toObject()
+            accountInfoObj.tweetsTotal = accountInfoObj.tweets.length;
+            accountInfoObj = _.omit(accountInfoObj,['tweets'])
+            responseData(res, accountInfoObj, 200, {});
         }
         else{
             responseData(res, {}, 202, {error : 'Cannot find account with address: ' + req.params.address});
