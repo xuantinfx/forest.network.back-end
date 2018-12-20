@@ -6,7 +6,7 @@ module.exports = async (req, res, next) => {
         let account = await Account.findOne({address: req.params.address},{followers: 1});
         // Không tìm thấy Account
         if(!account) {
-            return responseData(res, [], 202, {error : 'Cannot find account with address: ' + req.params.address});
+            return responseData(res, [], 404, {error : 'Cannot find account with address: ' + req.params.address});
         }
         
         let listFollowersAddress = account.followers;
