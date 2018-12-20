@@ -10,7 +10,7 @@ let AccountSchema = new mongoose.Schema({
   bandwidthTime: { type: Number },
   name: { type: String },
   username: { type: String },
-  picture: { type: String },
+  picture: { type: Buffer },
   coverPhotoUrl: { type: String },
   bio: { type: String },
   location: { type: String },
