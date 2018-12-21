@@ -7,9 +7,11 @@ module.exports = (req, res, next) => {
     (err, accountInfo)=> {
         if(accountInfo)
         {   
+            let picture = accountInfo.picture;
             let accountInfoObj = accountInfo.toObject()
             accountInfoObj.tweetsTotal = accountInfoObj.tweets.length;
             accountInfoObj = _.omit(accountInfoObj,['tweets'])
+            accountInfoObj.picture = picture;
             responseData(res, accountInfoObj, 200, {});
         }
         else{
