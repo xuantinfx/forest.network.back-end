@@ -1,6 +1,7 @@
 const { responseData } = require('../../utilities/responseData')
 var account = require('../../models/Account')
 var mapNameAndPicToTweets = require('../../utilities/mapNameAndPicToTweets')
+var _ = require('lodash')
 
 module.exports = (req, res, next) => {
     //console.log(req.query)
@@ -22,7 +23,9 @@ module.exports = (req, res, next) => {
                 }
             }
             //console.log('page', paging)
-            responseData(res, tweets, 200, {}, paging)
+            
+            let tweetsResp = _.orderBy(tweets,['time'],['desc'])
+            responseData(res, tweetsResp, 200, {}, paging)
         }
         else{
             responseData(res, {}, 202, {error : 'Cannot find account with address: ' + req.params.address});
