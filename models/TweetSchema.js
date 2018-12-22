@@ -12,6 +12,8 @@ module.exports = new mongoose.Schema({
   })],
   likes: [new mongoose.Schema({
     from: { type: String, required: true },
-    time: { type: Date, required: true }
-  })]
+    time: { type: Date, required: true },
+    reaction: { type: Number, required: true }
+  })],
+  hash: { type: String, required: true}
 })
