@@ -1,20 +1,45 @@
-module.exports = (account)=>{
-    let accountRes = {};
-    accountRes.tweets = account.tweets||[]
-    accountRes.name = account.name||''
-    accountRes.picture = account.picture||Buffer.alloc(0)
-    accountRes.address = account.address
+const _ = require('lodash')
+var Account = require('../models/Account')
 
-    //console.log(accountRes)
+module.exports = async (account, userAddress, cb)=>{
+    try{
+        let accountRes = {};
+        accountRes.tweets = account.tweets||[]
+        accountRes.name = account.name||''
+        accountRes.picture = account.picture||Buffer.alloc(0)
+        accountRes.address = account.address
 
-    let tweets = [];
-    for(let i = 0; i < accountRes.tweets.length; i++) {
-        let tweet = accountRes.tweets[i].toObject();
-        tweet.name = accountRes.name;
-        tweet.picture = accountRes.picture;
-        tweet.address = accountRes.address;
-        tweets.push(tweet);
+        //console.log(accountRes)
+
+        let tweets = [];
+        for(let i = 0; i < accountRes.tweets.length; i++) {
+            let tweet = accountRes.tweets[i].toObject();
+            if(tweet.content && tweet.content != ''){
+                tweet.name = accountRes.name;
+                tweet.picture = accountRes.picture;
+                tweet.address = accountRes.address;
+                let index = _.findIndex(tweet.likes,like=>{
+                    if(like.from == userAddress)
+                        return true;
+                })
+                //console.log('index', index)
+                tweet.reaction = (index === -1) ? 0:tweet.likes[index].reaction;
+                for(let i = 0; i < tweet.likes.length; i++)
+                {
+                    let like = tweet.likes[i]
+                    let accountInfo = await Account.findOne({address: like.from}, {address: 1, picture:1, name: 1})
+                    if(accountInfo)
+                        {   
+                            like.from = accountInfo
+                        }
+                } 
+                tweets.push(tweet);
+            }
+        }
+
+        cb(tweets);
     }
-
-    return tweets;
+    catch (err) {
+        console.log(err);
+    }
 }
