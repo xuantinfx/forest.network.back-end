@@ -8,24 +8,32 @@ module.exports = (req, res, next) => {
     account.findOne({address: req.params.address},{tweets:1, name: 1, picture:1, address: 1},
     (err, account)=> {
         if(account){
-            let tweets = mapNameAndPicToTweets(account)
-            let paging = {}
-            if(!req.query){
-                paging = {page:1, size: tweets.length}
-            }
-            else{
-                if(req.query.page && req.query.size)
-                {
-                    paging = req.query
-                }
-                else{
+            let tweets = []
+            console.log('account', account.address,req.headers.public_key)
+            mapNameAndPicToTweets(account, req.headers.public_key,(tweetRet)=>{tweets=tweetRet})
+            .then(()=>{
+
+                let paging = {}
+                if(!req.query){
                     paging = {page:1, size: tweets.length}
                 }
-            }
-            //console.log('page', paging)
-            
-            let tweetsResp = _.orderBy(tweets,['time'],['desc'])
-            responseData(res, tweetsResp, 200, {}, paging)
+                else{
+                    if(req.query.page && req.query.size)
+                    {
+                        paging = req.query
+                    }
+                    else{
+                        paging = {page:1, size: tweets.length}
+                    }
+                }
+                //console.log('page', paging)
+                
+                let tweetsResp = _.orderBy(tweets,['time'],['desc'])
+                responseData(res, tweetsResp, 200, {}, paging)
+            }).catch((err)=>{
+                console.log(err);
+                responseData(res, [], 500, {error : 'Internal Error'});
+            })
         }
         else{
             responseData(res, {}, 202, {error : 'Cannot find account with address: ' + req.params.address});
