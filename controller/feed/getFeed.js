@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
         }
         
         let listFollowingssAddress = account.followings;
-        listFollowingssAddress.push(req.headers.public_key)
+        //listFollowingssAddress.push(req.headers.public_key)
         let listFollowings = [];
         if( listFollowingssAddress.length > 0) {
             listFollowings = await Account.find({address: {$in: listFollowingssAddress}}, {address: 1, tweets:1, name: 1, picture: 1});
