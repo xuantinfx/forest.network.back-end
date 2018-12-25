@@ -1,6 +1,20 @@
 const _ = require('lodash')
 var Account = require('../models/Account')
 
+const populateFromByAccount = async (tweetLikes)=>{
+    let likes = tweetLikes
+    for(let i = 0; i < likes.length; i++)
+    {
+        let like = likes[i]
+        let accountInfo = await Account.findOne({address: like.from}, {address: 1, picture: 1, name: 1})
+        if(accountInfo)
+            {   
+                like.from = accountInfo
+            }
+    } 
+    return likes
+}
+
 module.exports = async (account, userAddress, cb)=>{
     try{
         let accountRes = {};
@@ -24,15 +38,17 @@ module.exports = async (account, userAddress, cb)=>{
                 })
                 //console.log('index', index)
                 tweet.reaction = (index === -1) ? 0:tweet.likes[index].reaction;
-                for(let i = 0; i < tweet.likes.length; i++)
+                /* for(let i = 0; i < tweet.likes.length; i++)
                 {
                     let like = tweet.likes[i]
-                    let accountInfo = await Account.findOne({address: like.from}, {address: 1, picture:1, name: 1})
+                    let accountInfo = await Account.findOne({address: like.from}, {address: 1, name: 1})
                     if(accountInfo)
                         {   
                             like.from = accountInfo
                         }
-                } 
+                }  */
+                tweet.likes = await populateFromByAccount(tweet.likes)
+                tweets.replies = await populateFromByAccount(tweet.replies)
                 tweets.push(tweet);
             }
         }
