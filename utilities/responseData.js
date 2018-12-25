@@ -25,7 +25,7 @@ module.exports.responseData = (res, data, status_code, message = {error: [], mes
     res.end(JSON.stringify(result));
 }
 
-const getDataWithPaging = (data = [], paging = {page: 1, size: 10}) => {
+const getDataWithPaging = (data = [], paging = {page: 1, size: -1}) => {
     let total = data.length,
         page = paging.page || 1,
         size = paging.size || 10
