@@ -70,7 +70,7 @@ module.exports.interact = (fromAdress, to, type, content) => {
     Account.findOne({address: fromAdress}, {name: 1}, (err, res) => {
         if(!err && res) {
             for(let i = 0; i < sockets.length; i++) {
-                if(sockets[i].socket === to.address) {
+                if(sockets[i].address === to.address) {
                     if(type === 1) {
                         sockets[i].socket.emit(chainel, {
                             type: typeAction.RECEIVE_COMMENT,
@@ -84,7 +84,7 @@ module.exports.interact = (fromAdress, to, type, content) => {
                             type: typeAction.RECEIVE_REACTION,
                             address: fromAdress,
                             name: res.name,
-                            content
+                            reaction: content
                         })
                     }
                 }
