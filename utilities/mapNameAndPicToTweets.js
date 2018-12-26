@@ -1,21 +1,26 @@
 const _ = require('lodash')
 var Account = require('../models/Account')
 
-const populateFromByAccount = async (tweetLikes)=>{
+const populateFromByAccount = async (tweetLikes, accountLikeReply)=>{
     let likes = tweetLikes
     for(let i = 0; i < likes.length; i++)
     {
         let like = likes[i]
-        let accountInfo = await Account.findOne({address: like.from}, {address: 1, picture: 1, name: 1})
-        if(accountInfo)
+        let index = _.findIndex(accountLikeReply,account=>(account.address === like.from))
+        //console.log('index',index)
+        if(index > -1)
+        {
+            let accountInfo = accountLikeReply[index]
+            if(accountInfo)
             {   
                 like.from = accountInfo
             }
+        }
     } 
     return likes
 }
 
-module.exports = async (account, userAddress, cb)=>{
+module.exports = async (account, userAddress, accountLikeReply, paging, cb)=>{
     try{
         let accountRes = {};
         accountRes.tweets = account.tweets||[]
@@ -23,6 +28,7 @@ module.exports = async (account, userAddress, cb)=>{
         accountRes.picture = account.picture||Buffer.alloc(0)
         accountRes.address = account.address
 
+        accountRes.tweets = _.orderBy(accountRes.tweets,['time'],['desc'])
         //console.log(accountRes)
 
         let tweets = [];
@@ -38,17 +44,13 @@ module.exports = async (account, userAddress, cb)=>{
                 })
                 //console.log('index', index)
                 tweet.reaction = (index === -1) ? 0:tweet.likes[index].reaction;
-                /* for(let i = 0; i < tweet.likes.length; i++)
-                {
-                    let like = tweet.likes[i]
-                    let accountInfo = await Account.findOne({address: like.from}, {address: 1, name: 1})
-                    if(accountInfo)
-                        {   
-                            like.from = accountInfo
-                        }
-                }  */
-                tweet.likes = await populateFromByAccount(tweet.likes)
-                tweets.replies = await populateFromByAccount(tweet.replies)
+
+                if(i >= (paging.page-1)*paging.size && i < paging.page*paging.size ){
+                    //console.log('abc',i,(paging.page-1)*paging.size,paging.page*paging.size)
+                    //console.log('abc',accountRes.tweets[i])
+                    tweet.likes = await populateFromByAccount(tweet.likes, accountLikeReply)
+                    tweets.replies = await populateFromByAccount(tweet.replies, accountLikeReply)
+                }
                 tweets.push(tweet);
             }
         }

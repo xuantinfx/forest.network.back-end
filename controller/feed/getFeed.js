@@ -17,31 +17,51 @@ module.exports = async (req, res, next) => {
         if( listFollowingssAddress.length > 0) {
             listFollowings = await Account.find({address: {$in: listFollowingssAddress}}, {address: 1, tweets:1, name: 1, picture: 1});
         }
-        let tweets = [];
-        for(let i = 0; i < listFollowings.length; i++){
-            following = listFollowings[i];
-            let tweetAfter = [];
-            await mapNameAndPicToTweets(following, req.headers.public_key,(tweetRet)=>{tweetAfter=tweetRet})
-            tweets = [...tweets,...tweetAfter];
-        };
 
-        let tweetsResp = _.orderBy(tweets,['time'],['desc'])
+        //Tìm các account react và reply
+        let likeAndReplyAddresses = [];
+        for(let iFollow = 0; iFollow < listFollowings.length; iFollow++){
+            let followingTweets = listFollowings[iFollow].tweets;
+            for(let i = 0; i < followingTweets.length; i++){
+                let tweetAtIndex =followingTweets[i];
+                for(let iLike = 0; iLike < tweetAtIndex.likes.length; iLike++){
+                    likeAndReplyAddresses.push(tweetAtIndex.likes[iLike].from);
+                }
+                for(let iRep = 0; iRep < tweetAtIndex.replies.length; iRep++){
+                    likeAndReplyAddresses.push(tweetAtIndex.replies[iRep].from);
+                }
+            }
+        }
 
-        
+        let accountLikeReply = await Account.find({address: {$in: likeAndReplyAddresses}}, {address: 1, name: 1, picture: 1});
+
         let paging = {}
         if(!req.query){
-            paging = {page:1, size: tweets.length}
+            paging = {page:1, size: account.tweets.length}
         }
         else{
-            if(req.query.page && req.query.size)
+            if(req.query.page && req.query.size && req.query.size > -1)
             {
                 paging = req.query
             }
             else{
-                paging = {page:1, size: tweets.length}
+                paging = {page:1, size: account.tweets.length}
             }
         }
-        responseData(res, tweetsResp, 200, {}, paging);
+
+        let tweets = [];
+        for(let i = 0; i < listFollowings.length; i++){
+            following = listFollowings[i];
+            let tweetAfter = [];
+            await mapNameAndPicToTweets(following, req.headers.public_key,accountLikeReply,
+                paging,(tweetRet)=>{tweetAfter=tweetRet})
+            tweets = [...tweets,...tweetAfter];
+        };
+
+        //let tweetsResp = _.orderBy(tweets,['time'],['desc'])
+
+        
+        responseData(res, tweets, 200, {}, paging);
     }
     catch (err) {
         console.log(err);
