@@ -1,6 +1,6 @@
 const { responseData } = require('../../utilities/responseData')
 var Account = require('../../models/Account')
-var mapNameAndPicToTweets = require('../../utilities/mapNameAndPicToTweets')
+var mapNameAndPicToTweets = require('../../utilities/mapNameAndPicToTweets').mapNameAndPicToTweets
 var _ = require('lodash')
 
 module.exports = (req, res, next) => {
@@ -40,16 +40,9 @@ module.exports = (req, res, next) => {
                         //console.log('page', paging)
                         let tweets = []
                         
-                        mapNameAndPicToTweets(account,req.headers.public_key,accountLikeReply,
-                            paging,(tweetsRet)=>{tweets=tweetsRet})
-                            .then(()=>{
-                                //let tweetsResp = _.orderBy(tweets,['time'],['desc'])
-                                responseData(res, tweets, 200, {}, paging)
-                            })
-                            .catch((error)=>{
-                                console.log(error);
-                                responseData(res, {}, 202, {error : 'Cannot find account'});
-                            })
+                        tweets = mapNameAndPicToTweets(account,req.headers.public_key,accountLikeReply, paging)
+                        responseData(res, tweets, 200, {}, paging)
+                           
                     }
                     else{
                         console.log(error);
