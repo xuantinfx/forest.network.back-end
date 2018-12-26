@@ -1,6 +1,6 @@
 const { responseData } = require('../../utilities/responseData')
 var Account = require('../../models/Account')
-var mapNameAndPicToTweets = require('../../utilities/mapNameAndPicToTweets')
+var {mapNameAndPicToTweets, populateFromByAccount} = require('../../utilities/mapNameAndPicToTweets')
 var _ = require('lodash')
 
 module.exports = async (req, res, next) => {
@@ -53,15 +53,21 @@ module.exports = async (req, res, next) => {
         for(let i = 0; i < listFollowings.length; i++){
             following = listFollowings[i];
             let tweetAfter = [];
-            await mapNameAndPicToTweets(following, req.headers.public_key,accountLikeReply,
-                paging,(tweetRet)=>{tweetAfter=tweetRet})
+            tweetAfter = mapNameAndPicToTweets(following, req.headers.public_key,accountLikeReply,
+                {page:1, size:-1})
+            
             tweets = [...tweets,...tweetAfter];
         };
 
-        //let tweetsResp = _.orderBy(tweets,['time'],['desc'])
+        let tweetsResp = _.orderBy(tweets,['time'],['desc'])
+
+        for(let i = (paging.page-1)*paging.size; i < tweetsResp.length && i < paging.page*paging.size; i++){
+            tweetsResp[i].likes = populateFromByAccount(tweetsResp[i].likes, accountLikeReply)
+            tweetsResp[i].replies = populateFromByAccount(tweetsResp[i].replies, accountLikeReply)
+        }
 
         
-        responseData(res, tweets, 200, {}, paging);
+        responseData(res, tweetsResp, 200, {}, paging);
     }
     catch (err) {
         console.log(err);
